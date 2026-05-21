@@ -23,6 +23,8 @@ docker compose exec web composer install
 docker compose exec web php artisan key:generate
 8. Wykonaj migracje:
 docker compose exec web php artisan migrate
+9. Testy
+docker compose exec web php artisan test
 
 Kontenery i porty
 web: wave-web, http://localhost:8080
