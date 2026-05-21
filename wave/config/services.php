@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    'super_secret_key' => env('SUPER_SECRET_KEY'),
+
 ];
