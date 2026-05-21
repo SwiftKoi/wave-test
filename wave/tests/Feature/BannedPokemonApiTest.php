@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\Feature;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\ConnectionException;
 use Tests\TestCase;
 use App\Models\BannedPokemon;
 use Illuminate\Support\Facades\Http;
@@ -25,14 +25,18 @@ class BannedPokemonApiTest extends TestCase
 
     public function test_banned_routes_require_secret_header(): void
     {
-        $this->getJson('/api/banned')->assertStatus(401);
+        $this->getJson('/api/banned')
+            ->assertStatus(401)
+            ->assertJsonPath('message', 'Brak naglowka autoryzacyjnego.');
     }
 
     public function test_banned_routes_reject_invalid_secret_header(): void
     {
         $this->getJson('/api/banned', [
             'X-SUPER-SECRET-KEY' => 'bad-secret',
-        ])->assertStatus(403);
+        ])
+            ->assertStatus(403)
+            ->assertJsonPath('message', 'Niepoprawny klucz autoryzacyjny.');
     }
 
     public function test_it_lists_banned_pokemon(): void
@@ -151,6 +155,39 @@ class BannedPokemonApiTest extends TestCase
 
         $response
             ->assertStatus(422)
+            ->assertJsonPath('message', 'Bledne dane wejsciowe.')
             ->assertJsonValidationErrors(['pokemon']);
+    }
+
+    public function test_it_returns_clean_not_found_when_deleting_missing_resource(): void
+    {
+        $response = $this->deleteJson('/api/banned/1212', [], [
+            'X-SUPER-SECRET-KEY' => $this->secret,
+        ]);
+
+        $response
+            ->assertStatus(404)
+            ->assertExactJson([
+                'message' => 'Nie znaleziono zasobu.',
+            ]);
+    }
+
+    public function test_it_returns_bad_gateway_when_pokeapi_is_unreachable(): void
+    {
+        Http::fake(function () {
+            throw new ConnectionException('blad polaczenia');
+        });
+
+        $response = $this->postJson('/api/banned', [
+            'pokemon' => 'pikachu',
+        ], [
+            'X-SUPER-SECRET-KEY' => $this->secret,
+        ]);
+
+        $response
+            ->assertStatus(502)
+            ->assertExactJson([
+                'message' => 'PokeAPI nie odpowiada.',
+            ]);
     }
 }
