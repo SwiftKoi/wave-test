@@ -12,19 +12,32 @@ Uruchomienie od zera
 1. Sklonuj repozytorium.
 2. Wejdź do katalogu projektu.
 3. Skopiuj konfiguracje:
+```bash
 cp .env.example .env
+
 cp wave/.env.example wave/.env
+```
 4. Ustaw DB i SUPER_SECRET_KEY w wave/.env (jak wyżej).
 5. Zbuduj i uruchom kontenery:
+```bash
 docker compose up -d --build
+```
 6. Zainstaluj zależności PHP:
+```bash
 docker compose exec web composer install
+```
 7. Wygeneruj klucz aplikacji:
+```bash
 docker compose exec web php artisan key:generate
+```
 8. Wykonaj migracje:
+```bash
 docker compose exec web php artisan migrate
+```
 9. Testy
+```bash
 docker compose exec web php artisan test
+```
 
 Kontenery i porty
 web: wave-web, http://localhost:8080
