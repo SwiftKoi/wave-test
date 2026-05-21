@@ -1,9 +1,5 @@
 Aplikacja do zarządzania listą zbanowanych Pokémonów oraz pobierania informacji o Pokémonach z PokeAPI z filtrowaniem banów.
 
-Wymagania
-
-Docker i Docker Compose.
-
 Pliki konfiguracyjne
 1. Root .env (dla Dockera): MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, UID, GID.
 2. wave/.env (dla Laravela): SUPER_SECRET_KEY=123, DB_CONNECTION=mysql, DB_HOST=db, DB_PORT=3306, DB_DATABASE=wave, DB_USERNAME=wave_user, DB_PASSWORD=root, APP_URL=http://localhost:8080.
@@ -41,7 +37,9 @@ docker compose exec web php artisan test
 
 Kontenery i porty
 web: wave-web, http://localhost:8080
+
 phpmyadmin: wave-phpmyadmin, http://localhost:8081
+
 db: wave-db, host: db, port: 3306
 
 Sprawdzenie działania
