@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banned_pokemon', function (Blueprint $table) {
+        Schema::create('banned_pokemons', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('pokemon_id')->unique();
+            $table->string('pokemon_name')->unique();
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banned_pokemon');
+        Schema::dropIfExists('banned_pokemons');
     }
 };
